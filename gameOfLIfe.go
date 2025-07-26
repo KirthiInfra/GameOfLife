@@ -1,16 +1,20 @@
 package gameoflife
 
+import "fmt"
+
 type Board struct {
     board [][]int
 }
 
-func NewBoard(m, n int) *Board {
-    board := make([][]int, m)
+func NewBoard(board [][]int) (*Board, error) {
+
     for i := range board {
-        board[i] = make([]int, n)
-        for j := range board[i] {
-            board[i][j] = 0
-        }
-    }
-    return &Board{board: board}
+		for j := range board[i] {
+			if board[i][j] != 0 && board[i][j] != 1 {
+				return nil, fmt.Errorf("invalid value at position [%d,%d]; must be 0 or 1", i, j)
+			}
+		}
+	}
+
+    return &Board{board: board}, nil
 }
