@@ -13,3 +13,16 @@ func TestNewBoard(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 }
+
+func TestMustNotCreateBoardWithNonBinaryValue(t *testing.T) {
+	boardWithNonBinaryValue := [][]int{
+		{1, 0, 1},
+		{0, 2, 0},
+		{1, 0, 1},
+	}
+	
+	_, err := NewBoard(boardWithNonBinaryValue)
+	if err == nil {
+		t.Errorf("Board must not be created with negative values")
+	}
+}
