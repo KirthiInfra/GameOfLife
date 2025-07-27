@@ -1,4 +1,4 @@
-package gameoflife
+package game
 
 import "fmt"
 
