@@ -2,11 +2,18 @@ package game
 
 import "fmt"
 
+const (
+    Dead         uint8 = 0
+    Alive        uint8 = 1
+    AliveToDead  uint8 = 2
+    DeadToAlive  uint8 = 3
+)
+
 type Board struct {
-    board [][]int
+    board [][]uint8
 }
 
-func NewBoard(board [][]int) (*Board, error) {
+func NewBoard(board [][]uint8) (*Board, error) {
 
     for i := range board {
 		for j := range board[i] {
@@ -19,7 +26,7 @@ func NewBoard(board [][]int) (*Board, error) {
     return &Board{board: board}, nil
 }
 
-func GameOfLife(board [][]int) *Board {
+func GameOfLife(board [][]uint8) *Board {
     m, n := len(board), len(board[0])
     directions := [8][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}}
     for i := 0; i < m; i++ {
