@@ -3,7 +3,7 @@ package game
 import "testing"
 
 func TestNewBoard(t *testing.T) {
-    board := [][]int{
+    board := [][]uint8{
 		{0, 0},
 		{1, 1},
 	}
@@ -15,7 +15,7 @@ func TestNewBoard(t *testing.T) {
 }
 
 func TestMustNotCreateBoardWithNonBinaryValue(t *testing.T) {
-	boardWithNonBinaryValue := [][]int{
+	boardWithNonBinaryValue := [][]uint8{
 		{1, 0, 1},
 		{0, 2, 0},
 		{1, 0, 1},
@@ -28,13 +28,13 @@ func TestMustNotCreateBoardWithNonBinaryValue(t *testing.T) {
 }
 
 func TestGameOfLife(t *testing.T) {
-    board := [][]int{
+    board := [][]uint8{
         {0, 1, 0},
         {0, 0, 1},
         {1, 1, 1},
 		{0, 0, 0},
     }
-    expected := [][]int{
+    expected := [][]uint8{
         {0, 0, 0},
         {1, 0, 1},
         {0, 1, 1},
