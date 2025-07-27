@@ -14,7 +14,7 @@ func TestNewBoard(t *testing.T) {
 	}
 }
 
-func TestMustNotCreateBoardWithNonBinaryValue(t *testing.T) {
+func TestMustNotCreateBoardWithBeyondTheLimitValues(t *testing.T) {
 	boardWithNonBinaryValue := [][]uint8{
 		{1, 0, 1},
 		{0, 2, 0},
@@ -23,7 +23,7 @@ func TestMustNotCreateBoardWithNonBinaryValue(t *testing.T) {
 
 	_, err := NewBoard(boardWithNonBinaryValue)
 	if err == nil {
-		t.Errorf("Board must not be created with negative values")
+		t.Errorf("Board must not be created with beyond the limit constant values(0, 1, 2, 3)")
 	}
 }
 
