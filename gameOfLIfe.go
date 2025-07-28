@@ -15,6 +15,52 @@ type Board struct {
     board [][]CellState
 }
 
+func (b *Board) Rows() int {
+    return len(b.board)
+}
+
+func (b *Board) Cols() int {
+    if b.Rows() == 0 {
+        return 0
+    }
+    return len(b.board[0])
+}
+
+func (b *Board) At(row, col int) CellState {
+    return b.board[row][col]
+}
+
+func (b *Board) Set(row, col int, state CellState) {
+    b.board[row][col] = state
+}
+
+func (b *Board) Clone() *Board {
+    rows, cols := b.Rows(), b.Cols()
+    clone := make([][]CellState, rows)
+    for i := 0; i < rows; i++ {
+        clone[i] = make([]CellState, cols)
+        copy(clone[i], b.board[i])
+    }
+    return &Board{board: clone}
+}
+
+// Neighbors returns all valid neighbor states of a cell (Tell, don't ask)
+func (b *Board) Neighbors(row, col int) []CellState {
+    directions := [8][2]int{
+        {-1, -1}, {-1, 0}, {-1, 1},
+        {0, -1},           {0, 1},
+        {1, -1},  {1, 0},  {1, 1},
+    }
+    neighbors := []CellState{}
+    for _, d := range directions {
+        nr, nc := row+d[0], col+d[1]
+        if nr >= 0 && nr < b.Rows() && nc >= 0 && nc < b.Cols() {
+            neighbors = append(neighbors, b.At(nr, nc))
+        }
+    }
+    return neighbors
+}
+
 func NewBoard(board [][]CellState) (*Board, error) {
 
     for i := range board {
