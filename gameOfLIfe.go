@@ -2,18 +2,20 @@ package game
 
 import "fmt"
 
+type CellState uint8
+
 const (
-    Dead         uint8 = 0
-    Alive        uint8 = 1
-    AliveToDead  uint8 = 2
-    DeadToAlive  uint8 = 3
+    Dead         CellState = 0
+    Alive        CellState = 1
+    AliveToDead  CellState = 2
+    DeadToAlive  CellState = 3
 )
 
 type Board struct {
-    board [][]uint8
+    board [][]CellState
 }
 
-func NewBoard(board [][]uint8) (*Board, error) {
+func NewBoard(board [][]CellState) (*Board, error) {
 
     for i := range board {
 		for j := range board[i] {
@@ -26,7 +28,7 @@ func NewBoard(board [][]uint8) (*Board, error) {
     return &Board{board: board}, nil
 }
 
-func GameOfLife(board [][]uint8) *Board {
+func GameOfLife(board [][]CellState) *Board {
     m, n := len(board), len(board[0])
     directions := [8][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}}
     for i := 0; i < m; i++ {
