@@ -74,42 +74,68 @@ func NewBoard(board [][]CellState) (*Board, error) {
     return &Board{board: board}, nil
 }
 
+// GameRules interface - Open for extension with new sets of rules (OCP)
+type GameRules interface {
+    NextState(current CellState, neighbors []CellState) CellState
+}
+
+// ClassicRules implements Conway's Game of Life
+type ClassicRules struct{}
+
+func (r ClassicRules) NextState(current CellState, neighbors []CellState) CellState {
+    liveCount := 0
+    for _, s := range neighbors {
+        if s == Alive || s == AliveToDead {
+            liveCount++
+        }
+    }
+
+    switch current {
+    case Alive:
+        if liveCount < 2 || liveCount > 3 {
+            return AliveToDead
+        }
+        return Alive
+    case Dead:
+        if liveCount == 3 {
+            return DeadToAlive
+        }
+        return Dead
+    default:
+        return Dead
+    }
+}
+
+// Next evolves the board to the next generation using provided GameRules
+func (b *Board) Next(rules GameRules) *Board {
+    next := b.Clone()
+    for i := 0; i < b.Rows(); i++ {
+        for j := 0; j < b.Cols(); j++ {
+            neighbors := b.Neighbors(i, j)
+            newState := rules.NextState(b.At(i, j), neighbors)
+            next.Set(i, j, newState)
+        }
+    }
+    // Finalize states by converting transition states to final states
+    for i := 0; i < next.Rows(); i++ {
+        for j := 0; j < next.Cols(); j++ {
+            switch next.At(i, j) {
+            case AliveToDead:
+                next.Set(i, j, Dead)
+            case DeadToAlive:
+                next.Set(i, j, Alive)
+            }
+        }
+    }
+    return next
+}
+
+// GameOfLife function using the above abstractions and default rules
 func GameOfLife(board [][]CellState) *Board {
-    m, n := len(board), len(board[0])
-    directions := [8][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}}
-    for i := 0; i < m; i++ {
-        for j := 0; j < n; j++ {
-            liveNeighbors := 0
-            for _, d := range directions {
-                ni, nj := i+d[0], j+d[1]
-                if ni >= 0 && ni < m && nj >= 0 && nj < n {
-                    if board[ni][nj] == 1 || board[ni][nj] == 2 {
-                        liveNeighbors++
-                    }
-                }
-            }
-            // Apply the four rules using state-encoding
-            if board[i][j] == 1 {
-                if liveNeighbors < 2 || liveNeighbors > 3 {
-                    board[i][j] = 2        // convert state live to dead
-                }
-            } else {
-                if liveNeighbors == 3 {
-                    board[i][j] = 3       // convert state dead to live
-                }
-            }
-        }
+    b, err := NewBoard(board)
+    if err != nil {
+        panic(err)
     }
-    // Finalize the state transition
-    for i := 0; i < m; i++ {
-        for j := 0; j < n; j++ {
-            if board[i][j] == 2 {
-                board[i][j] = 0
-            }
-            if board[i][j] == 3 {
-                board[i][j] = 1
-            }
-        }
-    }
-    return &Board{board: board}
+    rules := ClassicRules{}
+    return b.Next(rules)
 }
